@@ -1,21 +1,30 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
-import * as bcrypt from 'bcryptjs';
+import { Injectable, Inject } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { User } from "./user.entity";
+import * as bcrypt from "bcryptjs";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('USER_REPOSITORY')
+    @Inject("USER_REPOSITORY")
     private readonly userRepository: Repository<User>,
-  ) { }
+    private readonly jwtService: JwtService
+  ) {}
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
   }
 
   async find(id: number): Promise<User> {
-    return await this.userRepository.findOne({where: {id}});
+    return await this.userRepository.findOne({ where: { id } });
+  }
+
+  async findLoggedInUser(token: string): Promise<User> {
+    const decodedToken = this.jwtService.decode(token);
+    const userId = decodedToken.sub;
+
+    return await this.userRepository.findOne({ where: { id: userId } });
   }
 
   async findByEmail(email: string): Promise<User> {

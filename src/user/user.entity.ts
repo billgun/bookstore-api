@@ -1,7 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class User  {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,4 +14,6 @@ export class User  {
   @Column({ length: 500 })
   password: string;
 
+  @Column({ default: 100 })
+  point: number;
 }
